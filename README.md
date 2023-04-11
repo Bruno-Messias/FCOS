@@ -1,7 +1,9 @@
 # FOCS
 
 - [ ] Add to(device) for agnostic code
+- [ ] Add Data path to config file 
 - [ ] See Diferences from [this](https://github.com/zhenghao977/FCOS-PyTorch-37.2AP) implementation
+- [ ] Add argument parser
 - [ ] Automatic Download datasets
 - [ ] Creating new loss and heads
 - [ ] Remove some methods in FOCS class and put in utils file
