@@ -1,7 +1,9 @@
 # FOCS
 
 - [ ] Add to(device) for agnostic code
-- [ ] Add Data path to config file 
+- [ ] Add Data path to config file
+- [ ] Add requirements file
+- [ ] remove tensorflow logger
 - [ ] See Diferences from [this](https://github.com/zhenghao977/FCOS-PyTorch-37.2AP) implementation
 - [ ] Add argument parser
 - [ ] Automatic Download datasets
