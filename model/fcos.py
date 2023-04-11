@@ -1,17 +1,11 @@
-'''
-@Author: xxxmy
-@Github: github.com/VectXmy
-@Date: 2019-09-26
-@Email: xxxmy@foxmail.com
-'''
+import torch
+import torch.nn as nn
 
 from .head import ClsCntRegHead
 from .fpn import FPN
-from .backbone.resnet import resnet50
-import torch.nn as nn
-from .loss import GenTargets,LOSS,coords_fmap2orig
-import torch
-from .config import DefaultConfig
+from .backbone import resnet50
+from engine.loss import GenTargets, LOSS, coords_fmap2orig
+from engine.config import DefaultConfig
 
 
 

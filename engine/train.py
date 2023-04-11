@@ -2,8 +2,8 @@ import torch
 import math,time
 
 from model.fcos import FCOSDetector
-from dataloader.VOC_dataset import VOCDataset
-# from torch.utils.tensorboard import SummaryWriter
+from data.voc import VOCDataset
+from torch.utils.tensorboard import SummaryWriter
 
 train_dataset=VOCDataset("/home/xht/voc2012/VOCdevkit/VOC2012",resize_size=[512,800],split='train')
 val_dataset=VOCDataset("/home/xht/voc2012/VOCdevkit/VOC2012",resize_size=[512,800],split='val')
@@ -11,7 +11,7 @@ val_dataset=VOCDataset("/home/xht/voc2012/VOCdevkit/VOC2012",resize_size=[512,80
 model=FCOSDetector(mode="training").cuda()
 optimizer=torch.optim.Adam(model.parameters(),lr=1e-4)
 
-BATCH_SIZE=6
+BATCH_SIZE=6 #Adding this to Config file
 EPOCHS=30
 WARMPUP_STEPS_RATIO=0.12
 train_loader=torch.utils.data.DataLoader(train_dataset,batch_size=BATCH_SIZE,shuffle=True,collate_fn=train_dataset.collate_fn)
@@ -71,9 +71,3 @@ for epoch in range(EPOCHS):
         GLOBAL_STEPS+=1
     
     torch.save(model.state_dict(),"./voc2012_512x800_epoch%d_loss%.4f.pth"%(epoch+1,loss.item()))
-    
-
-
-
-
-

@@ -1,6 +1,5 @@
 import torch.nn as nn
 import torch.nn.functional as F
-import math
 
 class FPN(nn.Module): #TODO: inherit from Feature Pyramidal Function
     def __init__(self,features=256,use_p5=True):
@@ -49,4 +48,3 @@ class FPN(nn.Module): #TODO: inherit from Feature Pyramidal Function
         P7 = self.conv_out7(F.relu(P6))
 
         return [P3,P4,P5,P6,P7]
-
