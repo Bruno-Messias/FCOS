@@ -14,3 +14,4 @@
 - [ ] Adding COCO map Analyzer (Found the github project)
 - [ ] Upload to Hugging Faces
 - [ ] Generating Plots of Metrics
+- [ ] Use [Sahi](https://github.com/obss/sahi) project
