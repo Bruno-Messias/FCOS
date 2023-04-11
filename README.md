@@ -1,5 +1,6 @@
 # FOCS
 
+- [ ] Add to(device) for agnostic code
 - [ ] See Diferences from [this](https://github.com/zhenghao977/FCOS-PyTorch-37.2AP) implementation
 - [ ] Automatic Download datasets
 - [ ] Creating new loss and heads
