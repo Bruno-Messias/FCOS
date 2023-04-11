@@ -15,3 +15,4 @@
 - [ ] Upload to Hugging Faces
 - [ ] Generating Plots of Metrics
 - [ ] Use [Sahi](https://github.com/obss/sahi) project
+- [ ] Use [TIDE](https://github.com/dbolya/tide) project
