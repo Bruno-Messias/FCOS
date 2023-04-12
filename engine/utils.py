@@ -123,6 +123,3 @@ def eval_ap_2d(gt_boxes, gt_labels, pred_boxes, pred_labels, pred_scores, iou_th
         all_ap[label] = ap
         # print(recall, precision)
     return all_ap
-
-if __name__=="__main__":
-    
