@@ -5,8 +5,13 @@ from model.fcos import FCOSDetector
 from data.voc import VOCDataset
 from torch.utils.tensorboard import SummaryWriter
 
-train_dataset=VOCDataset("/home/xht/voc2012/VOCdevkit/VOC2012",resize_size=[512,800],split='train')
-val_dataset=VOCDataset("/home/xht/voc2012/VOCdevkit/VOC2012",resize_size=[512,800],split='val')
+train_dataset=VOCDataset("/home/bruno-messias/Github/data/VOCdevkit/VOC2012",
+                         resize_size=[512,800],
+                         split='train')
+
+val_dataset=VOCDataset("/home/bruno-messias/Github/data/VOCdevkit/VOC2012",
+                       resize_size=[512,800],
+                       split='val')
 
 model=FCOSDetector(mode="training").cuda()
 optimizer=torch.optim.Adam(model.parameters(),lr=1e-4)
