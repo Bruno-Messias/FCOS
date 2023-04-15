@@ -20,8 +20,8 @@ optimizer=torch.optim.Adam(model.parameters(),lr=1e-4)
 BATCH_SIZE=6 #Adding this to Config file
 EPOCHS=30
 WARMPUP_STEPS_RATIO=0.12
-train_loader=torch.utils.data.DataLoader(train_dataset,batch_size=BATCH_SIZE,shuffle=True,collate_fn=train_dataset.collate_fn)
-val_loader=torch.utils.data.DataLoader(val_dataset,batch_size=BATCH_SIZE,shuffle=True,collate_fn=val_dataset.collate_fn)
+train_loader=torch.utils.data.DataLoader(train_dataset,batch_size=BATCH_SIZE,shuffle=True,collate_fn=train_dataset.collate_fn, num_workers=4)
+val_loader=torch.utils.data.DataLoader(val_dataset,batch_size=BATCH_SIZE,shuffle=True,collate_fn=val_dataset.collate_fn, num_workers=4)
 steps_per_epoch=len(train_dataset)//BATCH_SIZE
 TOTAL_STEPS=steps_per_epoch*EPOCHS
 WARMPUP_STEPS=TOTAL_STEPS*WARMPUP_STEPS_RATIO
