@@ -14,6 +14,7 @@ val_dataset=VOCDataset("/home/bruno-messias/Github/data/VOCdevkit/VOC2012",
                        split='val')
 
 model=FCOSDetector(mode="training").cuda()
+model = torch.nn.DataParallel(model)
 optimizer=torch.optim.Adam(model.parameters(),lr=1e-4)
 
 BATCH_SIZE=6 #Adding this to Config file
