@@ -37,7 +37,7 @@ config = dict(
     lr_init=5e-5,
     lr_end=1e-6,
     dataset="PASCALVOC_2012",
-    data_path='/home/bruno-messias/Github/data/VOCdevkit/VOC2012',
+    data_path='/home/bruno-messias/Github/data3/VOCtrainval_11-May-2012/VOCdevkit/VOC2012',
     resize_size=[512,800],
     architecture="MyFCOS")
 
