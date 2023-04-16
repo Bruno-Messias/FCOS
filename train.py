@@ -17,7 +17,7 @@ model=FCOSDetector(mode="training").cuda()
 model = torch.nn.DataParallel(model)
 optimizer=torch.optim.Adam(model.parameters(),lr=1e-4)
 
-BATCH_SIZE=6 #Adding this to Config file
+BATCH_SIZE=8 #Adding this to Config file
 EPOCHS=30
 WARMPUP_STEPS_RATIO=0.12
 train_loader=torch.utils.data.DataLoader(train_dataset,batch_size=BATCH_SIZE,shuffle=True,collate_fn=train_dataset.collate_fn, num_workers=4)
@@ -76,4 +76,4 @@ for epoch in range(EPOCHS):
 
         GLOBAL_STEPS+=1
     
-    torch.save(model.state_dict(),"./voc2012_512x800_epoch%d_loss%.4f.pth"%(epoch+1,loss.item()))
+    torch.save(model.state_dict(),"./weights/voc2012_512x800_epoch%d_loss%.4f.pth"%(epoch+1,loss.item()))
