@@ -112,7 +112,7 @@ def train(model, loader, optimizer, config):
 
             global_steps+=1
         
-        torch.save(model.state_dict(),"./checkpoint/voc2012_512x800_epoch%d_loss%.4f.pth"%(epoch+1,loss.item()))
+        torch.save(model.state_dict(),"./checkpoints/voc2012_512x800_epoch%d_loss%.4f.pth"%(epoch+1,loss.item()))
 
 def lr_func(config, global_steps, total_steps, warmup_steps):
     if global_steps<warmup_steps:
@@ -153,7 +153,7 @@ def model_pipeline(hyperparameters):
       test(val_loader)
 
 def test(loader):
-    weight_path = './checkpoint' 
+    weight_path = './checkpoints' 
     extension = '.pth' 
 
     files = glob.glob(os.path.join(weight_path, '*' + extension))
