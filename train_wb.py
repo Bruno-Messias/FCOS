@@ -112,7 +112,7 @@ def train(model, loader, optimizer, config):
 
             global_steps+=1
         
-        torch.save(model.state_dict(),"./weights/voc2012_512x800_epoch%d_loss%.4f.pth"%(epoch+1,loss.item()))
+        torch.save(model.state_dict(),"./checkpoint/voc2012_512x800_epoch%d_loss%.4f.pth"%(epoch+1,loss.item()))
 
 def lr_func(config, global_steps, total_steps, warmup_steps):
     if global_steps<warmup_steps:
@@ -153,7 +153,7 @@ def model_pipeline(hyperparameters):
       test(val_loader)
 
 def test(loader):
-    weight_path = './weights/' 
+    weight_path = './checkpoint' 
     extension = '.pth' 
 
     files = glob.glob(os.path.join(weight_path, '*' + extension))
@@ -210,4 +210,9 @@ def test(loader):
     wandb.save("model.onnx")
 
 if __name__=="__main__":
+
+    folder_checkpoint = './checkpoints' 
+    if not os.path.exists(folder_checkpoint):
+        os.mkdir(folder_checkpoint)
+
     model_pipeline(config)
