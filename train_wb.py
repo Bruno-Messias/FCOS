@@ -107,7 +107,7 @@ def train(model, loader, optimizer, config):
 
             
              # Report metrics every 25th batch
-            if (global_steps % 100) == 0:
+            if (global_steps % 50) == 0:
                 train_log(global_steps, losses, epoch, epoch_step, steps_per_epoch, cost_time, lr)
 
             global_steps+=1
@@ -125,10 +125,10 @@ def lr_func(config, global_steps, total_steps, warmup_steps):
 
 def train_log(global_steps, losses, epoch, epoch_step, steps_per_epoch, cost_time, lr):
     # Where the magic happens
-    print("global_steps:%d epoch:%d steps:%d/%d cls_loss:%.4f cnt_loss:%.4f reg_loss:%.4f cost_time:%dms lr=%.4e"%\
+    print("\n global_steps:%d epoch:%d steps:%d/%d cls_loss:%.4f cnt_loss:%.4f reg_loss:%.4f cost_time:%dms lr=%.4e"%\
                 (global_steps,epoch+1,epoch_step+1,steps_per_epoch,losses[0],losses[1],losses[2],cost_time,lr))
 
-    wandb.log({ "epoch": epoch, 
+    wandb.log({ "epoch": epoch+1, 
                 "cls_loss": losses[0],
                 "cnt_loss": losses[1],
                 "reg_loss": losses[2],
