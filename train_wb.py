@@ -162,7 +162,7 @@ def test(loader):
     file_name = []
     for file in files:
         filename = file.split("/")
-        loss_data = filename[4].split("_")
+        loss_data = filename[2].split("_")
         num = loss_data[3].split("loss")
         numbers = num[1].split(".")
         loss = f"{numbers[0]}.{numbers[1]}"
@@ -173,6 +173,7 @@ def test(loader):
     index_min = losses.index(min_value)
 
     model=FCOSDetector(mode="inference")
+    model = torch.nn.DataParallel(model)
     model.load_state_dict(torch.load(file_name[index_min], map_location=torch.device('cpu')))
     model=model.to(device).eval()
     print("===>success loading model")
