@@ -144,7 +144,7 @@ def model_pipeline(hyperparameters):
 
       # make the model, data, and optimization problem
       model, train_loader, val_loader, optimizer = make(config)
-      print(model)
+    #   print(model)
 
       # and use them to train the model
       train(model, train_loader, optimizer, config)
