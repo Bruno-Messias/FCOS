@@ -27,7 +27,7 @@ torch.manual_seed(hash("by removing stochasticity") % 2**32 - 1)
 torch.cuda.manual_seed_all(hash("so runs are repeatable") % 2**32 - 1)
 
 # Device configuration
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 config = dict(
     epochs=30,
@@ -92,7 +92,8 @@ def train(model, loader, optimizer, config):
 
             # Forward pass ➡
             losses=model([batch_imgs,batch_boxes,batch_classes])
-            loss=losses[-1] 
+            # loss=losses[-1] 
+            loss = sum(losses)
             #? Pq apenas a última loss? Ver o do unbiased? e https://github.com/zhenghao977/FCOS-PyTorch-37.2AP/blob/master/train_voc.py
 
             # Backward pass ⬅
