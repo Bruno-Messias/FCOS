@@ -151,7 +151,7 @@ def model_pipeline(hyperparameters):
       train(model, train_loader, optimizer, config)
 
       # save models
-      test(val_loader)
+    #   test(val_loader)
 
 def test(loader):
     weight_path = './checkpoints' 
