@@ -14,7 +14,7 @@ eval_loader=torch.utils.data.DataLoader(eval_dataset,batch_size=1,shuffle=False,
 model=FCOSDetector(mode="inference")
 # model=torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
 # print("INFO===>success convert BN to SyncBN")
-# model = torch.nn.DataParallel(model)
+model = torch.nn.DataParallel(model)
 model.load_state_dict(torch.load("./checkpoints/voc2012_512x800_epoch1_loss4.6031.pth",map_location=torch.device('cpu')))
 # model=convertSyncBNtoBN(model)
 # print("INFO===>success convert SyncBN to BN")
