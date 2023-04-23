@@ -92,12 +92,12 @@ def model_pipeline(hyperparameters):
       config = wandb.config
 
       # make the model, data, and optimization problem
-      _, _, val_loader, __ = make(config)
+      model, _, val_loader, __ = make(config)
 
       # save models
-      test(val_loader)
+      test(model, val_loader)
 
-def test(loader):
+def test(model, loader):
     # weight_path = './checkpoints' 
     # extension = '.pth' 
 
