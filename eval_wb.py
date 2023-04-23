@@ -8,7 +8,7 @@ from data.voc import VOCDataset
 from engine.utils import sort_by_score, eval_ap_2d
 # from torch.utils.tensorboard import SummaryWriter
 
-import os
+# import os
 import random
 
 import numpy as np
