@@ -6,16 +6,16 @@ from data.voc import VOCDataset
 from model.fcos import FCOSDetector
 
 
-eval_dataset = VOCDataset(root_dir='/Users/zhangzhenghao/VOC0712', resize_size=[800, 1333],
-                           split='test', use_difficult=False, is_train=False, augment=None)
+eval_dataset = VOCDataset(root_dir='/home/bruno-messias/Github/data3/VOCtrainval_11-May-2012/VOCdevkit/VOC2012', resize_size=[800, 1333],
+                           split='val', use_difficult=False, is_train=False, augment=None)
 print("INFO===>eval dataset has %d imgs"%len(eval_dataset))
 eval_loader=torch.utils.data.DataLoader(eval_dataset,batch_size=1,shuffle=False,collate_fn=eval_dataset.collate_fn)
 
 model=FCOSDetector(mode="inference")
 # model=torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
 # print("INFO===>success convert BN to SyncBN")
-model = torch.nn.DataParallel(model)
-model.load_state_dict(torch.load("./checkpoint/voc_78.7.pth",map_location=torch.device('cpu')))
+# model = torch.nn.DataParallel(model)
+model.load_state_dict(torch.load("./checkpoints/voc2012_512x800_epoch1_loss4.6031.pth",map_location=torch.device('cpu')))
 # model=convertSyncBNtoBN(model)
 # print("INFO===>success convert SyncBN to BN")
 model=model.cuda().eval()
