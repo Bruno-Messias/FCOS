@@ -48,7 +48,7 @@ def make(config):
                              split='train', 
                              use_difficult=config.difficult,
                              is_train=config.is_train,
-                             augment=config.transform)
+                             augment=Transforms())
     
     val_dataset=VOCDataset(config.data_path, 
                            resize_size=config.resize_size,
@@ -95,7 +95,7 @@ def train(model, loader, optimizer, config):
         for epoch_step, data in enumerate(loader):
 
             batch_imgs,batch_boxes,batch_classes=data
-            
+
             (batch_imgs, batch_boxes, batch_classes) = lazy(batch_imgs, batch_boxes, batch_classes, batch=0)
 
             batch_imgs=batch_imgs.to(device)
