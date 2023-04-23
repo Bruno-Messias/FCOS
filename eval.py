@@ -18,7 +18,7 @@ model = torch.nn.DataParallel(model)
 model.load_state_dict(torch.load("./checkpoints/voc2012_512x800_epoch1_loss4.6031.pth",map_location=torch.device('cpu')))
 # model=convertSyncBNtoBN(model)
 # print("INFO===>success convert SyncBN to BN")
-model=model.cuda().eval()
+model=model.to(device).eval()
 print("===>success loading model")
 
 gt_boxes=[]

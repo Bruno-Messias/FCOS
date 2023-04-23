@@ -1,23 +1,19 @@
 import torch
-import math,time
 import wandb
+import os,math,time, random
+# import torchvision
+# import glob
 
+# import torch.nn as nn
+import numpy as np
+# import torchvision.transforms as transforms
+
+from tqdm.auto import tqdm
 from torch.utils.data import DataLoader
 from model.fcos import FCOSDetector
 from data.voc import VOCDataset
+from data.augment import Transforms
 from engine.utils import sort_by_score, eval_ap_2d
-from torch.utils.tensorboard import SummaryWriter
-
-import os
-import random
-
-import numpy as np
-import torch
-import torch.nn as nn
-import torchvision
-import torchvision.transforms as transforms
-from tqdm.auto import tqdm
-import glob
 
 # Ensure deterministic behavior
 torch.backends.cudnn.deterministic = True
@@ -28,7 +24,7 @@ torch.cuda.manual_seed_all(hash("so runs are repeatable") % 2**32 - 1)
 
 # Device configuration
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-#! Add augmentation
+
 config = dict(
     epochs=30,
     batch_size=8,
@@ -39,12 +35,29 @@ config = dict(
     dataset="PASCALVOC_2012",
     data_path='/home/bruno-messias/Github/data3/VOCtrainval_11-May-2012/VOCdevkit/VOC2012',
     resize_size=[512,800],
+    transform = Transforms(),
+    difficult=False,
+    is_train=True,
     architecture="MyFCOS")
+
+#3:10
 
 def make(config):
     # Make the data
-    train_dataset=VOCDataset(config.data_path, resize_size=config.resize_size, split='train')
-    val_dataset=VOCDataset(config.data_path, resize_size=config.resize_size,split='val')
+    train_dataset=VOCDataset(config.data_path, 
+                             resize_size=config.resize_size, 
+                             split='train', 
+                             use_difficult=config.difficult,
+                             is_train=config.is_train,
+                             augment=config.transform)
+    
+    val_dataset=VOCDataset(config.data_path, 
+                           resize_size=config.resize_size,
+                           split='val',
+                           use_difficult=config.use_difficult, 
+                           is_train=False,
+                           augment=None)
+    
     train_loader = DataLoader(train_dataset,
                               batch_size=config.batch_size, 
                               shuffle=True, 
@@ -54,8 +67,11 @@ def make(config):
     val_loader = DataLoader(val_dataset,
                             batch_size=config.batch_size, 
                             shuffle=True, 
-                            collate_fn=train_dataset.collate_fn, 
+                            collate_fn=val_dataset.collate_fn, 
                             num_workers=config.num_workers)
+    
+    print("Total Images [TRAIN] : {}".format(len(train_dataset)))
+    print("Total Images [VAL] : {}".format(len(val_dataset)))
 
     # Make the model
     model = FCOSDetector(mode="training").to(device)
@@ -93,7 +109,7 @@ def train(model, loader, optimizer, config):
             # Forward pass ➡
             losses=model([batch_imgs,batch_boxes,batch_classes])
             # loss=losses[-1] 
-            loss = sum(losses)
+            loss = sum(losses).mean()
             #? Pq apenas a última loss? Ver o do unbiased? e https://github.com/zhenghao977/FCOS-PyTorch-37.2AP/blob/master/train_voc.py
 
             # Backward pass ⬅
@@ -107,13 +123,13 @@ def train(model, loader, optimizer, config):
             cost_time=int((end_time-start_time)*1000)
 
             
-             # Report metrics every 25th batch
+             # Report metrics every 50th batch
             if (global_steps % 50) == 0:
                 train_log(global_steps, losses, epoch, epoch_step, steps_per_epoch, cost_time, lr)
 
             global_steps+=1
         
-        torch.save(model.state_dict(),"./checkpoints/voc2012_512x800_epoch%d_loss%.4f.pth"%(epoch+1,loss.item()))
+        torch.save(model.state_dict(),"./checkpoints/epoch%d_loss%.4f.pth"%(epoch+1,loss.item()))
 
 def lr_func(config, global_steps, total_steps, warmup_steps):
     if global_steps<warmup_steps:
@@ -144,72 +160,69 @@ def model_pipeline(hyperparameters):
       config = wandb.config
 
       # make the model, data, and optimization problem
-      model, train_loader, val_loader, optimizer = make(config)
+      model, train_loader, _, optimizer = make(config)
     #   print(model)
 
       # and use them to train the model
       train(model, train_loader, optimizer, config)
 
-      # save models
-    #   test(val_loader)
+# def test(loader):
+#     weight_path = './checkpoints' 
+#     extension = '.pth' 
 
-def test(loader):
-    weight_path = './checkpoints' 
-    extension = '.pth' 
+#     files = glob.glob(os.path.join(weight_path, '*' + extension))
 
-    files = glob.glob(os.path.join(weight_path, '*' + extension))
+#     losses = []
+#     file_name = []
+#     for file in files:
+#         filename = file.split("/")
+#         loss_data = filename[2].split("_")
+#         num = loss_data[2].split("loss")
+#         numbers = num[1].split(".")
+#         loss = f"{numbers[0]}.{numbers[1]}"
+#         losses.append(loss)
+#         file_name.append(file)
 
-    losses = []
-    file_name = []
-    for file in files:
-        filename = file.split("/")
-        loss_data = filename[2].split("_")
-        num = loss_data[3].split("loss")
-        numbers = num[1].split(".")
-        loss = f"{numbers[0]}.{numbers[1]}"
-        losses.append(loss)
-        file_name.append(file)
+#     min_value = min(losses)
+#     index_min = losses.index(min_value)
 
-    min_value = min(losses)
-    index_min = losses.index(min_value)
+#     model=FCOSDetector(mode="inference")
+#     model = torch.nn.DataParallel(model)
+#     model.load_state_dict(torch.load(file_name[index_min], map_location=torch.device('cpu')))
+#     model=model.to(device).eval()
+#     print("===>success loading model")
 
-    model=FCOSDetector(mode="inference")
-    model = torch.nn.DataParallel(model)
-    model.load_state_dict(torch.load(file_name[index_min], map_location=torch.device('cpu')))
-    model=model.to(device).eval()
-    print("===>success loading model")
+#     gt_boxes=[]
+#     gt_classes=[]
+#     pred_boxes=[]
+#     pred_classes=[]
+#     pred_scores=[]
+#     num=0
+#     for img,boxes,classes in loader:
+#         with torch.no_grad():
+#             out=model(img.cuda())
+#             pred_boxes.append(out[2][0].cpu().numpy())
+#             pred_classes.append(out[1][0].cpu().numpy())
+#             pred_scores.append(out[0][0].cpu().numpy())
+#         gt_boxes.append(boxes[0].numpy())
+#         gt_classes.append(classes[0].numpy())
+#         num+=1
+#         print(num,end='\r')
 
-    gt_boxes=[]
-    gt_classes=[]
-    pred_boxes=[]
-    pred_classes=[]
-    pred_scores=[]
-    num=0
-    for img,boxes,classes in loader:
-        with torch.no_grad():
-            out=model(img.cuda())
-            pred_boxes.append(out[2][0].cpu().numpy())
-            pred_classes.append(out[1][0].cpu().numpy())
-            pred_scores.append(out[0][0].cpu().numpy())
-        gt_boxes.append(boxes[0].numpy())
-        gt_classes.append(classes[0].numpy())
-        num+=1
-        print(num,end='\r')
+#     pred_boxes,pred_classes,pred_scores=sort_by_score(pred_boxes,pred_classes,pred_scores)
 
-    pred_boxes,pred_classes,pred_scores=sort_by_score(pred_boxes,pred_classes,pred_scores)
+#     all_AP=eval_ap_2d(gt_boxes,gt_classes,pred_boxes,pred_classes,pred_scores,0.5,len(loader.CLASSES_NAME)+1)
+#     print("all classes AP=====>\n",all_AP)
 
-    all_AP=eval_ap_2d(gt_boxes,gt_classes,pred_boxes,pred_classes,pred_scores,0.5,len(loader.CLASSES_NAME)+1)
-    print("all classes AP=====>\n",all_AP)
+#     mAP=0.
+#     for class_id,class_mAP in all_AP.items():
+#         mAP+=float(class_mAP)
+#     mAP/=(len(loader.CLASSES_NAME)+1)
+#     print("mAP=====>%.3f\n"%mAP)
 
-    mAP=0.
-    for class_id,class_mAP in all_AP.items():
-        mAP+=float(class_mAP)
-    mAP/=(len(loader.CLASSES_NAME)+1)
-    print("mAP=====>%.3f\n"%mAP)
-
-    # Save the model in the exchangeable ONNX format
-    torch.onnx.export(model, img, "model.onnx")
-    wandb.save("model.onnx")
+#     # Save the model in the exchangeable ONNX format
+    # torch.onnx.export(model, img, "model.onnx")
+    # wandb.save("model.onnx")
 
 if __name__=="__main__":
 
