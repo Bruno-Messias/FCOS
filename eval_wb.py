@@ -39,12 +39,10 @@ config = dict(
     dataset="PASCALVOC_2012",
     data_path='/home/bruno-messias/Github/data3/VOCtrainval_11-May-2012/VOCdevkit/VOC2012',
     resize_size=[512,800],
-    transform = Transforms(),
+    transform = None,
     difficult=False,
     is_train=True,
     architecture="MyFCOS")
-
-#3:10
 
 def make(config):
     # Make the data
