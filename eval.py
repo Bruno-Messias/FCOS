@@ -7,7 +7,8 @@ from model.fcos import FCOSDetector
 
 
 eval_dataset = VOCDataset(root_dir='/home/bruno-messias/Github/data3/VOCtrainval_11-May-2012/VOCdevkit/VOC2012', resize_size=[800, 1333],
-                           split='val', use_difficult=False, is_train=False, augment=None)
+                          split='val', use_difficult=False, is_train=False, augment=None)
+
 print("INFO===>eval dataset has %d imgs"%len(eval_dataset))
 eval_loader=torch.utils.data.DataLoader(eval_dataset,batch_size=1,shuffle=False,collate_fn=eval_dataset.collate_fn)
 

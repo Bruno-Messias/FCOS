@@ -13,7 +13,8 @@ from torch.utils.data import DataLoader
 from model.fcos import FCOSDetector
 from data.voc import VOCDataset
 from data.augment import Transforms
-from engine.utils import sort_by_score, eval_ap_2d
+from koila import lazy
+# from engine.utils import sort_by_score, eval_ap_2d
 
 # Ensure deterministic behavior
 torch.backends.cudnn.deterministic = True
@@ -39,8 +40,6 @@ config = dict(
     difficult=False,
     is_train=True,
     architecture="MyFCOS")
-
-#3:10
 
 def make(config):
     # Make the data
@@ -96,6 +95,9 @@ def train(model, loader, optimizer, config):
         for epoch_step, data in enumerate(loader):
 
             batch_imgs,batch_boxes,batch_classes=data
+            
+            (batch_imgs, batch_boxes, batch_classes) = lazy(batch_imgs, batch_boxes, batch_classes, batch=0)
+
             batch_imgs=batch_imgs.to(device)
             batch_boxes=batch_boxes.to(device)
             batch_classes=batch_classes.to(device)

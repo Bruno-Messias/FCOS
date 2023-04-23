@@ -1,10 +1,10 @@
-# FOCS
+# FCOS
 
-- [ ] Add to(device) for agnostic code
-- [ ] Add Data path to config file
+- [x] Add to(device) for agnostic code
+- [x] Add Data path to config file
 - [ ] Add requirements file
-- [ ] remove tensorflow logger
-- [ ] See Diferences from [this](https://github.com/zhenghao977/FCOS-PyTorch-37.2AP) implementation
+- [x] remove tensorflow logger
+- [x] See Diferences from [this](https://github.com/zhenghao977/FCOS-PyTorch-37.2AP) implementation
 - [ ] Add argument parser
 - [ ] Automatic Download datasets
 - [ ] Creating new loss and heads
@@ -22,4 +22,5 @@
 - [ ] Generating Plots of Metrics
 - [ ] Use [Sahi](https://github.com/obss/sahi) project
 - [ ] Use [TIDE](https://github.com/dbolya/tide) project
-- [ ] Use [Koila](https://github.com/rentruewang/koila) project
+- [x] Use [Koila](https://github.com/rentruewang/koila) project
+- [ ] Creating [Lightning Pytorch](https://lightning.ai/docs/pytorch/stable/starter/introduction.html)
