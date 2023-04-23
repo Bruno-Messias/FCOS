@@ -28,7 +28,7 @@ torch.cuda.manual_seed_all(hash("so runs are repeatable") % 2**32 - 1)
 
 # Device configuration
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
+#! Add augmentation
 config = dict(
     epochs=30,
     batch_size=8,
