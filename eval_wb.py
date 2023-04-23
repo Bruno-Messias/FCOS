@@ -76,7 +76,7 @@ def make(config):
     print("Total Images [VAL] : {}".format(len(val_dataset)))
 
     # Make the model
-    model = FCOSDetector(mode="training").to(device)
+    model = FCOSDetector(mode="inference").to(device)
     model = torch.nn.DataParallel(model)
 
     # Make the  optimizer
