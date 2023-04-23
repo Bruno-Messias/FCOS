@@ -54,7 +54,7 @@ def make(config):
     val_dataset=VOCDataset(config.data_path, 
                            resize_size=config.resize_size,
                            split='val',
-                           use_difficult=config.use_difficult, 
+                           use_difficult=config.difficult, 
                            is_train=False,
                            augment=None)
     

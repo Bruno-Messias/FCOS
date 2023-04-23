@@ -39,12 +39,29 @@ config = dict(
     dataset="PASCALVOC_2012",
     data_path='/home/bruno-messias/Github/data3/VOCtrainval_11-May-2012/VOCdevkit/VOC2012',
     resize_size=[512,800],
+    transform = Transforms(),
+    difficult=False,
+    is_train=True,
     architecture="MyFCOS")
+
+#3:10
 
 def make(config):
     # Make the data
-    train_dataset=VOCDataset(config.data_path, resize_size=config.resize_size, split='train')
-    val_dataset=VOCDataset(config.data_path, resize_size=config.resize_size,split='val')
+    train_dataset=VOCDataset(config.data_path, 
+                             resize_size=config.resize_size, 
+                             split='train', 
+                             use_difficult=config.difficult,
+                             is_train=config.is_train,
+                             augment=config.transform)
+    
+    val_dataset=VOCDataset(config.data_path, 
+                           resize_size=config.resize_size,
+                           split='val',
+                           use_difficult=config.difficult, 
+                           is_train=False,
+                           augment=None)
+    
     train_loader = DataLoader(train_dataset,
                               batch_size=config.batch_size, 
                               shuffle=True, 
@@ -54,11 +71,14 @@ def make(config):
     val_loader = DataLoader(val_dataset,
                             batch_size=config.batch_size, 
                             shuffle=True, 
-                            collate_fn=train_dataset.collate_fn, 
+                            collate_fn=val_dataset.collate_fn, 
                             num_workers=config.num_workers)
+    
+    print("Total Images [TRAIN] : {}".format(len(train_dataset)))
+    print("Total Images [VAL] : {}".format(len(val_dataset)))
 
     # Make the model
-    model = FCOSDetector(mode="inference").to(device)
+    model = FCOSDetector(mode="training").to(device)
     model = torch.nn.DataParallel(model)
 
     # Make the  optimizer
