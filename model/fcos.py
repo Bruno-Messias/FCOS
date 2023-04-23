@@ -7,9 +7,7 @@ from .backbone import resnet50
 from engine.loss import GenTargets, LOSS, coords_fmap2orig
 from engine.config import DefaultConfig
 
-
-
-class FCOS(nn.Module): #TODO: Remove some methods and put in utils file
+class FCOS(nn.Module):
     
     def __init__(self,config=None):
         super().__init__()
@@ -51,7 +49,7 @@ class FCOS(nn.Module): #TODO: Remove some methods and put in utils file
         cls_logits,cnt_logits,reg_preds=self.head(all_P)
         return [cls_logits,cnt_logits,reg_preds]
 
-class DetectHead(nn.Module): 
+class DetectHead(nn.Module):
     def __init__(self,score_threshold,nms_iou_threshold,max_detection_boxes_num,strides,config=None):
         super().__init__()
         self.score_threshold=score_threshold
@@ -76,9 +74,11 @@ class DetectHead(nn.Module):
         cls_preds=cls_logits.sigmoid_()
         cnt_preds=cnt_logits.sigmoid_()
 
+        coords =coords.cuda() if torch.cuda.is_available() else coords
+
         cls_scores,cls_classes=torch.max(cls_preds,dim=-1)#[batch_size,sum(_h*_w)]
         if self.config.add_centerness:
-            cls_scores=cls_scores*(cnt_preds.squeeze(dim=-1))#[batch_size,sum(_h*_w)]
+            cls_scores = torch.sqrt(cls_scores*(cnt_preds.squeeze(dim=-1)))#[batch_size,sum(_h*_w)]
         cls_classes=cls_classes+1#[batch_size,sum(_h*_w)]
 
         boxes=self._coords2boxes(coords,reg_preds)#[batch_size,sum(_h*_w),4]
@@ -228,12 +228,14 @@ class FCOSDetector(nn.Module):
                                             config.max_detection_boxes_num,config.strides,config)
             self.clip_boxes=ClipBoxes()
         
+    
     def forward(self,inputs):
         '''
         inputs 
         [training] list  batch_imgs,batch_boxes,batch_classes
         [inference] img
         '''
+
         if self.mode=="training":
             batch_imgs,batch_boxes,batch_classes=inputs
             out=self.fcos_body(batch_imgs)
@@ -250,8 +252,3 @@ class FCOSDetector(nn.Module):
             scores,classes,boxes=self.detection_head(out)
             boxes=self.clip_boxes(batch_imgs,boxes)
             return scores,classes,boxes
-
-
-
-    
-

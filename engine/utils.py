@@ -16,23 +16,21 @@ def iou_2d(cubes_a, cubes_b):
     :param cubes_b: [M,(x1,y1,x2,y2)]
     :return:  IoU [N,M]
     """
-    # 扩维
+    # expands dim
     cubes_a = np.expand_dims(cubes_a, axis=1)  # [N,1,4]
     cubes_b = np.expand_dims(cubes_b, axis=0)  # [1,M,4]
-
-    # 分别计算高度和宽度的交集
     overlap = np.maximum(0.0,
                          np.minimum(cubes_a[..., 2:], cubes_b[..., 2:]) -
                          np.maximum(cubes_a[..., :2], cubes_b[..., :2]))  # [N,M,(w,h)]
 
-    # 交集
+    # overlap
     overlap = np.prod(overlap, axis=-1)  # [N,M]
 
-    # 计算面积
+    # compute area
     area_a = np.prod(cubes_a[..., 2:] - cubes_a[..., :2], axis=-1)
     area_b = np.prod(cubes_b[..., 2:] - cubes_b[..., :2], axis=-1)
 
-    # 交并比
+    # compute iou
     iou = overlap / (area_a + area_b - overlap)
     return iou
 
