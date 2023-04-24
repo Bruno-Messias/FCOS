@@ -17,7 +17,6 @@
 - [ ] Adding Weighting and Biases logger
 - [ ] Changing config for YAML file
 - [ ] Adding Metrics from [Metrics](https://github.com/rafaelpadilla/review_object_detection_metrics)
-- [ ] Adding COCO map Analyzer (Found the github project)
 - [ ] Upload to Hugging Faces
 - [ ] Generating Plots of Metrics
 - [ ] Use [Sahi](https://github.com/obss/sahi) project
