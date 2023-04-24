@@ -4,7 +4,10 @@ import cv2
 from engine.utils import sort_by_score, iou_2d, _compute_ap, eval_ap_2d
 from data.voc import VOCDataset
 from model.fcos import FCOSDetector
+from tqdm.auto import tqdm
 
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 eval_dataset = VOCDataset(root_dir='/home/bruno-messias/Github/data3/VOCtrainval_11-May-2012/VOCdevkit/VOC2012', resize_size=[800, 1333],
                           split='val', use_difficult=False, is_train=False, augment=None)
@@ -28,7 +31,7 @@ pred_boxes=[]
 pred_classes=[]
 pred_scores=[]
 num=0
-for img,boxes,classes in eval_loader:
+for img,boxes,classes in tqdm(eval_loader):
     with torch.no_grad():
         out=model(img.cuda())
         pred_boxes.append(out[2][0].cpu().numpy())
@@ -36,8 +39,6 @@ for img,boxes,classes in eval_loader:
         pred_scores.append(out[0][0].cpu().numpy())
     gt_boxes.append(boxes[0].numpy())
     gt_classes.append(classes[0].numpy())
-    num+=1
-    print(num,end='\r')
 
 pred_boxes,pred_classes,pred_scores=sort_by_score(pred_boxes,pred_classes,pred_scores)
 all_AP=eval_ap_2d(gt_boxes,gt_classes,pred_boxes,pred_classes,pred_scores,0.5,len(eval_dataset.CLASSES_NAME))
